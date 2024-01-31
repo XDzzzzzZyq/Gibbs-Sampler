@@ -6,7 +6,8 @@ Daily_opening = []
 Daily_closing = []
 
 import csv
-file_path = 'd:/STATS PROJECT/Project/HistoricalData.csv'
+file_path = 'HistoricalData.csv'
+
 with open(file_path, 'r') as file:
     reader = csv.reader(file)
     for row in reader:
@@ -59,6 +60,7 @@ def Get_Variance (Pri_a, Pri_b, data):
 
 def Draw_InvGamma (a, b):
     return invgamma.rvs(a, b)
+
 
 for i in range(len(Daily_return)):
     mean = Get_Mean(mu_mean, mu_var, Daily_return[i])
