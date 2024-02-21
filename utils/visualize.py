@@ -5,6 +5,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
+
 def draw(data, title="BTC", xlabel="Date", ylabel=""):
     sns.set_style("darkgrid")
     plt.figure(figsize=(15, 6))
@@ -55,4 +56,23 @@ def show_distribution(mu, sigma2):
 
     ax.set_xlabel(r'Distribution of $\mu$')
     ax.set_ylabel(r'Distribution of $\sigma^2$')
-    
+
+
+import statsmodels.api as sm
+from statsmodels.graphics import tsaplots
+
+
+def show_corr(data):
+    mu_ac = sm.tsa.acf(data)
+    tsaplots.plot_acf(mu_ac)
+    plt.figure(figsize=(12, 4))
+    plt.show()
+
+
+def show_VaR(data, var):
+    bins = np.linspace(data.min(), data.max(), 50)
+    plt.figure(figsize=(12, 6))
+    plt.hist(data, bins=bins, label='Log Returns')
+    plt.axvspan(min(var), max(var), color='k', label='95% VaR')
+    plt.legend()
+    plt.show()
