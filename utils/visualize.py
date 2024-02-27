@@ -76,3 +76,12 @@ def show_VaR(data, var):
     plt.axvspan(min(var), max(var), color='k', label='95% VaR')
     plt.legend()
     plt.show()
+
+def show_VaR_ES(data, var, es):
+        bins = np.linspace(data.min(), data.max(), 50)
+        plt.figure(figsize=(12, 6))
+        plt.hist(data, bins=bins, label='Log Returns')
+        plt.axvspan(min(var), max(var), color='k', label='95% VaR')
+        plt.axvspan(min(es), max(es), color='r', label='95% ES')
+        plt.legend()
+        plt.show()
