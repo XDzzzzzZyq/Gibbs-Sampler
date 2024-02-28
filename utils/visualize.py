@@ -63,9 +63,10 @@ from statsmodels.graphics import tsaplots
 
 
 def show_corr(data):
-    mu_ac = sm.tsa.acf(data)
-    tsaplots.plot_acf(mu_ac)
+    mu_ac = sm.tsa.acf(data, nlags=100)
     plt.figure(figsize=(12, 4))
+    plt.plot(range(len(mu_ac)), mu_ac)
+    plt.xlabel(r"lags $\tau$")
     plt.show()
 
 
@@ -73,7 +74,7 @@ def show_VaR(data, var):
     bins = np.linspace(data.min(), data.max(), 50)
     plt.figure(figsize=(12, 6))
     plt.hist(data, bins=bins, label='Log Returns')
-    plt.axvspan(min(var), max(var), color='k', label='95% VaR', alpha=0.5)
+    plt.axvspan(min(var), max(var), color='k', label='99% VaR', alpha=0.5)
     plt.legend()
     plt.show()
 
@@ -81,7 +82,7 @@ def show_VaR_ES(data, var, es):
         bins = np.linspace(data.min(), data.max(), 50)
         plt.figure(figsize=(12, 6))
         plt.hist(data, bins=bins, label='Log Returns')
-        plt.axvspan(min(var), max(var), color='k', label='95% VaR', alpha=0.5)
-        plt.axvspan(min(es), max(es), color='r', label='95% ES', alpha=0.5)
+        plt.axvspan(min(var), max(var), color='k', label='99% VaR', alpha=0.5)
+        plt.axvspan(min(es), max(es), color='r', label='99% ES', alpha=0.5)
         plt.legend()
         plt.show()
