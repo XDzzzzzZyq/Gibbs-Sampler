@@ -2,32 +2,45 @@ import numpy as np
 from scipy.stats import invgamma
 
 
-def sample_gaus(_mu0, _n, _mean, _sigma2, _sigma02):
-    dom = _sigma2 + _n * _sigma02
-    return np.random.normal(loc=(_sigma2 * _mu0 + _sigma02 * _n * _mean) / dom, scale=np.sqrt(_sigma2 * _sigma02) / dom,
-                            size=1)
+def sample_gaus(_mu,_sigma2):
+    return np.random.normal(loc=_mu, scale=np.sqrt(_sigma2), size=1)
 
 
-def sample_invGa(_alpha, _beta, _n, _mean):
-    return invgamma.rvs(_alpha + _n / 2, scale=_beta + _n * _mean / 2, size=1)
+def sample_invGa(_alpha, _beta):
+    return invgamma.rvs(_alpha, scale=_beta, size=1)
 
 
-def gibbs_sample(mean_, sigma2_, n_, samples, alpha_=10, beta_=0.5, sigma_02=100):
+def gibbs_sample(data, samples, alpha_=10, beta_=0.5, sigma_02=100):
+    n_ = data.size
+    mean_ = data.mean()
+    sigma2_ = data.std()**2
+    
     mu = mean_
     sigma2 = sigma2_
 
     mu_0 = mu
     sigma_02 = sigma_02
 
-    alpha = alpha_
-    beta = beta_
+    alpha0 = alpha_
+    beta0 = beta_
+    V0 = sigma_02 / sigma2_
+    Ex2 = sigma2_ - mean_**2
 
     mu_L = []
     sigma2_L = []
 
     for i in range(samples):
-        mu = sample_gaus(mu_0, n_, mean_, sigma2, sigma_02)
-        sigma2 = sample_invGa(alpha, beta, n_, mean_)
+
+        Vn = sigma_02/(sigma2 + n_*sigma_02)
+        mu_n = Vn/V0*mu_0 + Vn*n_*mean_        
+        mu = sample_gaus(mu_n, sigma2*Vn)
+
+        mu_s = ((data - mu)**2).sum()
+        alpha_n = alpha0 + n_/2
+        #beta_n = beta0 + (mu_0**2/V0 + n_*Ex2 - mu_n**2/Vn)/2
+        beta_n = beta0 + mu_s/2
+        
+        sigma2 = sample_invGa(alpha_n, beta_n)
 
         mu_L += [mu]
         sigma2_L += [sigma2]
